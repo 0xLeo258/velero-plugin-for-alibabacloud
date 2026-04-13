@@ -497,8 +497,10 @@ func (b *VolumeSnapshotter) getTags(veleroTags map[string]string, volumeTags []*
 			continue
 		}
 		tagKey := tea.StringValue(tag.TagKey)
-		// skip system-reserved tag prefixes that are not allowed in API calls
-		if strings.HasPrefix(tagKey, systemTagPrefixACS) || strings.HasPrefix(tagKey, systemTagPrefixAliyun) {
+		tagValue := tea.StringValue(tag.TagValue)
+		// skip tags whose key or value violates Alibaba Cloud ECS tag restrictions:
+		// cannot start with "acs:" or "aliyun", cannot contain "http://" or "https://"
+		if isInvalidTag(tagKey) || isInvalidTag(tagValue) {
 			continue
 		}
 		// we want current Velero-assigned tags to overwrite any older versions
@@ -514,6 +516,14 @@ func (b *VolumeSnapshotter) getTags(veleroTags map[string]string, volumeTags []*
 	}
 
 	return result
+}
+
+// isInvalidTag checks whether a tag key or value violates Alibaba Cloud ECS tag restrictions.
+func isInvalidTag(s string) bool {
+	return strings.HasPrefix(s, systemTagPrefixACS) ||
+		strings.HasPrefix(s, systemTagPrefixAliyun) ||
+		strings.Contains(s, forbiddenHTTP) ||
+		strings.Contains(s, forbiddenHTTPS)
 }
 
 // getTagsWithVolumeZone processes Velero tags and volume tags to create snapshot tags,

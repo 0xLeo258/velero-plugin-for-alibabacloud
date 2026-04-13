@@ -37,10 +37,12 @@ const (
 	OriginStr = "volumeId"
 	TargetStr = "VolumeId"
 
-	// systemTagPrefixACS and systemTagPrefixAliyun are reserved tag key prefixes
-	// used by Alibaba Cloud internally. The ECS API rejects these in write operations.
+	// Reserved tag prefixes and forbidden substrings per Alibaba Cloud ECS API.
+	// Tags with keys or values matching these are rejected in write operations.
 	systemTagPrefixACS    = "acs:"
 	systemTagPrefixAliyun = "aliyun"
+	forbiddenHTTP         = "http://"
+	forbiddenHTTPS        = "https://"
 )
 
 var validConfigKeys = []string{
