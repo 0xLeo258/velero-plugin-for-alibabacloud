@@ -36,6 +36,11 @@ const (
 	// Constants for volume ID conversion
 	OriginStr = "volumeId"
 	TargetStr = "VolumeId"
+
+	// systemTagPrefixACS and systemTagPrefixAliyun are reserved tag key prefixes
+	// used by Alibaba Cloud internally. The ECS API rejects these in write operations.
+	systemTagPrefixACS    = "acs:"
+	systemTagPrefixAliyun = "aliyun"
 )
 
 var validConfigKeys = []string{

@@ -497,6 +497,10 @@ func (b *VolumeSnapshotter) getTags(veleroTags map[string]string, volumeTags []*
 			continue
 		}
 		tagKey := tea.StringValue(tag.TagKey)
+		// skip system-reserved tag prefixes that are not allowed in API calls
+		if strings.HasPrefix(tagKey, systemTagPrefixACS) || strings.HasPrefix(tagKey, systemTagPrefixAliyun) {
+			continue
+		}
 		// we want current Velero-assigned tags to overwrite any older versions
 		// of them that may exist due to prior snapshots/restores
 		if _, found := veleroTags[tagKey]; found {

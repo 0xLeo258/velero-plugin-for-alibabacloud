@@ -432,6 +432,19 @@ func TestGetTags(t *testing.T) {
 			},
 		},
 		{
+			name: "system-reserved tag prefixes (acs: and aliyun) are filtered out",
+			veleroTags: map[string]string{"velero-key": "velero-val"},
+			volumeTags: []*ecs20140526.DescribeDisksResponseBodyDisksDiskTagsTag{
+				{TagKey: tea.String("acs:ecs:somefield"), TagValue: tea.String("sys-val1")},
+				{TagKey: tea.String("aliyun-tag"), TagValue: tea.String("sys-val2")},
+				{TagKey: tea.String("user-key"), TagValue: tea.String("user-val")},
+			},
+			expected: []*ecs20140526.CreateSnapshotRequestTag{
+				{Key: tea.String("velero-key"), Value: tea.String("velero-val")},
+				{Key: tea.String("user-key"), Value: tea.String("user-val")},
+			},
+		},
+		{
 			name: "when tags overlap, velero tags take precedence",
 			veleroTags: map[string]string{
 				"velero-key":      "velero-val",
